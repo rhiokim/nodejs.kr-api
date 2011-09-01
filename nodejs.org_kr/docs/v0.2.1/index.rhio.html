@@ -1,0 +1,371 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <style type="text/css">
+    ul {
+      padding: 0;
+      margin: 0;
+    }
+    </style>
+    <script type="text/javascript" src="sh_main.js"></script>
+    <script type="text/javascript" src="sh_javascript.min.js"></script>
+    <link type="text/css" rel="stylesheet" href="pipe.css" />
+    <link type="text/css" rel="stylesheet" href="sh_vim-dark.css" />
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>node.js</title>
+  </head>
+  <body onload="sh_highlightDocument();">
+    <div id="toc">
+      <ol>
+        <li><a href="#download">다운로드</a></li>
+        <li><a href="changelog.html">변경내용</a></li>
+        <li><a href="#build">빌드</a></li>
+        <li><a href="#about">개요</a></li>
+        <li><a href="#links">링크</a></li>
+        <li><a href="#contributing">공헌하기</a></li>
+        <li><a href="api.html">문서</a></li>
+      </ol>
+    </div>
+    <div id="content">
+
+      <!-- <h1><a href="http://nodejs.org/">Node</a></h1> -->
+      <img id="logo" src="logo.png" alt="node.js"/>
+
+      <p id="introduction">
+        Evented I/O for
+        <a href="http://code.google.com/p/v8/">V8 JavaScript</a>.
+      </p>
+
+      <p>
+        An example of a web server written in Node which responds with
+        "Hello World" for every request.
+        모든 요청에 대해 "Hello World"라고 응답하는 Node를 이용해 작성된 WEB 서버의 예입니다. 
+      </p>
+
+      <pre>
+var http = require('http');
+http.createServer(function (req, res) {
+  res.writeHead(200, {'Content-Type': 'text/plain'});
+  res.end('Hello World\n');
+}).listen(8124, "127.0.0.1");
+console.log('Server running at http://127.0.0.1:8124/');
+</pre>
+
+      <p>
+        To run the server, put the code into a file
+        <code>example.js</code> and execute it with the <code>node</code>
+        program:
+        이 서버를 실행하려면 코드를 example.js 라는 파일명으로 저장하고 아래와 같이
+        node 명령을 실행하십시오.
+      </p>
+      <pre class="sh_none">
+% node example.js
+Server running at http://127.0.0.1:8124/</pre>
+
+      <p>
+        Here is an example of a simple TCP server which listens on port 8124
+        and echoes whatever you send it:
+        또한, 포트 번호 8124에서 수신하고 무엇이든 에코하는 간단한 TCP 서버는 다음과 같습니다.
+      </p>
+
+      <pre>
+var net = require('net');
+net.createServer(function (socket) {
+  socket.setEncoding("utf8");
+  socket.write("Echo server\r\n");
+  socket.on("data", function (data) {
+    socket.write(data);
+  });
+  socket.on("end", function () {
+    socket.end();
+  });
+}).listen(8124, "127.0.0.1");
+</pre>
+
+      <p>
+        See the <a href="api.html">API documentation</a> for more
+        examples.
+        API 문서에 더 많은 예제가 있습니다.
+      </p>
+
+      <h2 id="download">Download 다운로드</h2>
+
+      <p>
+        <a href="http://github.com/ry/node/tree/master">git repo(저장소)</a>
+      </p>
+      <p>
+        2010.08.20
+        <a href="http://nodejs.org/dist/node-v0.2.2.tar.gz">node-v0.2.2.tar.gz</a>
+      </p>
+
+      <p>Historical: <a href="http://nodejs.org/dist">versions</a>, <a href="http://nodejs.org/docs">docs</a></p>
+
+      <h2 id="build">Build 빌드</h2>
+
+      <p>
+        Node is tested on <b>Linux</b>, <b>Macintosh</b>, and
+        <b>Solaris</b>. It also runs on <b>Windows/Cygwin</b>,
+        <b>FreeBSD</b>, and <b>OpenBSD</b>. The build system requires Python
+        2.4 or better.  V8, on which Node is built, supports only IA-32,
+        x64, and ARM processors. V8 is included in the Node distribution.
+        To use TLS, OpenSSL is required.  There are no other dependencies.드
+        Node는 Linux와 Macintosh, Solrais에서 테스트하고 있습니다. Windows/Cygwin 및
+        Free BSD, OpenBSD에서도 동작합니다. 빌드 시 Python 2.4 이상이 필요합니다. V8 엔진
+        (Node를 빌드합니다.)은 IA-32 및 x64, ARM의 프로세스만 지원하고 있습니다. V8엔진은
+        Node의 배포판에 포함되어 있습니다. TLS를 사용하기 위해는 OpenSSL이 필요합니다.
+        그 종속성은 없습니다.
+      </p>
+
+      <pre class="sh_none">
+./configure
+make
+make install</pre>
+
+      <p>
+        Then have a look at the <a href="api.html">API documentation</a>.
+        그리고는 API 문서를 참조하십시오.
+      </p>
+
+      <p>To run the tests 테스트를 하려면 다음과 같은 명령을 실행합니다.</p>
+
+      <pre class="sh_none">make test</pre>
+
+      <h2 id="about">About</h2>
+
+      <p>
+        Node's goal is to provide an easy way to build scalable network
+        programs. In the "hello world" web server example above, many
+        client connections can be handled concurrently.  Node tells the
+        operating system (through <code>epoll</code>, <code>kqueue</code>,
+        <code class="sh_none">/dev/poll</code>, or <code>select</code>)
+        that it should be notified when a new connection is made, and 
+        then it goes to sleep. If someone new connects, then it executes
+        the callback.  Each connection is only a small heap allocation.
+        Node의 목표는 손쉽게 확장이 가능한 네트워크 프로그램을 만드는 방법을 제
+        공하는 것입니다. 위의 "Hello World" 웹 서버 예제에서는 다수의 클라이언트
+        와의 연결을 동시에 처리할 수 있습니다. Node는 OS에(epoll 이나 kqueue,
+        /dev/poll 또는 select를 통해) 새로운 연결이 도착하면 알 수 있도록 지시
+        하고, 절전 상태가 됩니다. 그리고 새로운 연결이 있는 경우 콜백을 수행합니다.
+        각각의 연결은 아주 작은 힙 밖에 할당되지 않습니다.
+      </p>
+
+      <p>
+        This is in contrast to today's more common concurrency model where
+        OS threads are employed. Thread-based networking is relatively 
+        inefficient and very difficult to use.  See:
+        <a href="http://www.kegel.com/c10k.html">this</a> and 
+        <a href="http://bulk.fefe.de/scalable-networking.pdf">this.</a>
+
+        Node will show much better memory efficiency under high-loads
+        <!-- TODO benchmark -->
+        than systems which allocate 2mb thread stacks for each connection.
+
+        Furthermore, users of Node are free from worries of dead-locking
+        the process&mdash;there are no locks.  Almost no function in Node
+        directly performs I/O, so the process never blocks. Because
+        nothing blocks, less-than-expert programmers are able to develop
+        fast systems.
+
+        이것은 OS 스레드를 가진 최근의 일반적인 동시성 모델과는 대조적입니다. 이
+        기술에 비해 쓰레드 기반 네트워크 프로그램은 비효율적이고 또한 아주 사용하기
+        어렵다는 것입니다. <a href="http://www.kegel.com/c10k.html">여기</a> 와
+        <a href="http://bulk.fefe.de/scalable-networking.pdf">여기/a>를 참조하십시오. Node는 하나의 연결마다 2MB의 스택
+        메모리를 할당하는 쓰레드 시스템에 비해 작업량이 매우 좋은 메모리 효율을 제공
+        합니다. 또한 Node 사용자는 프로세스의 교착 상태에 대한 불안에서 해방되었습니다.
+        Node에는 잠금 장치가 없습니다. Node에 직접 I/O를 수행하는 함수가 거의
+        없기 때문에 프로세스는 결코 차단되지 않습니다. 블록이 없기 때문에 전문가가
+        아닌 프로그래머이라도 빠른 시스템을 개발하는 것이 가능합니다.
+      </p>
+
+      <p>
+        Node is similar in design to and influenced by systems like Ruby's <a
+        href="http://rubyeventmachine.com/">Event Machine</a> or Python's <a
+        href="http://twistedmatrix.com/">Twisted</a>.  Node takes the event
+        model a bit further&mdash;it presents the event loop as a language
+        construct instead of as a library. In other systems there is always
+        a blocking call to start the event-loop.  Typically one defines
+        behavior through callbacks at the beginning of a script and at the
+        end starts a server through a blocking call like
+        <code>EventMachine::run()</code>. In Node there is no such
+        start-the-event-loop call.  Node simply enters the event loop after
+        executing the input script. Node exits the event loop when there are
+        no more callbacks to perform.  This behavior is like browser
+        javascript&mdash;the event loop is hidden from the user.기
+
+        Node는 Ruby의 Event Machine 이나 Python의 Twisted의 영향을 받고 있으며,
+        비슷한 디자인으로 되어있습니다. 그러나 Node의 이벤트 모델은 조금더 진보했습
+        니다. 즉 이벤트 루프를 라이브러리로 제공하는 것이 아니라 언어 자체에 포함된
+        구성으로 제공하고 있습니다. Node가 아닌 시스템에서는 이벤트 루프를 시작할 때
+        차단시키는 호출도 존재합니다. 그러한 시스템은 일반적으로 스크립트의 시작부분
+        에서 콜백을 통해 수행할 작업을 정의하고 스크립트의 마지막에 EventMachine::run()
+        과 같은 블록을 호출하여 서버를 시작하고 있습니다. Node 에서는 이러한 "이벤
+        트 루프의 시작" 호출하지 않습니다. Node는 입력되는 스크립트를 실행하고 나면
+        그대로 이벤트 루프에 들어갑니다. 그리고 동작해야할 콜백이 없으면 이벤트 루프
+        에서 빠져 나옵니다. 이러한 동작은 브라우저의 JavaScript와 동일합니다. 즉,
+        이벤트 루프는 사용자로부터 은닉되어 있는 것입니다.
+      </p>
+
+      <p>
+        HTTP is a first class protocol in Node.  Node's HTTP library has
+        grown out of the author's experiences developing and working with
+        web servers. For example, streaming data through most web frameworks
+        is impossible.  Node attempts to correct these problems in its HTTP
+        <a href="http://github.com/ry/http-parser/tree/master">parser</a>
+        and API. Coupled with Node's purely evented infrastructure, it makes
+        a good foundation for web libraries or frameworks.
+
+        HTTP는 Node에서 최고의 프로토콜 입니다. Node의 HTTP 라이브러리는 제작자의
+        웹 서버 개발 경험을 탈피하게 하였습니다. 예를 들어 데이터 스트리밍은 대부분의
+        웹 프레임워크에서는 불가능합니다. Node는 이러한 문제점을 HTTP 파서와 API를
+        통하여 해결하려 합니다. Node의 이벤트 중심적인 설치하는 경우 웹 라이브러리 및
+        프레임워크들을 위한 매우 좋은 기반이 될 것입니다.
+      </p>
+
+      <p>
+        <i>
+        But what about multiple-processor concurrency? Aren't threads
+        necessary to scale programs to multi-core computers?
+        하지만 멀티 프로세서 환경에서는 어떻게 될까? 멀티 코어 컴퓨터에서 프로그
+        램을 확장하기 위해서는 스레드를 사용해야 하는 것이 아닌가?
+        </i>
+        Processes are necessary to scale to multi-core computers, not
+        memory-sharing threads. The fundamentals of scalable systems are
+        fast networking and non-blocking design&mdash;the rest is message
+        passing.  In future versions, Node will be able to fork new
+        processes (using the <a
+        href="http://www.whatwg.org/specs/web-workers/current-work/"> Web
+        Workers API </a>) which fits well into the current design.
+        멀티코어 컴퓨터에서는 확장하기 위해 필요한 메모리 공유 쓰레드가 없습니다.
+        확장 가능한 시스템의 기본은 빠른 네트워킹 및 차단이 없는 설계이고 나머지는
+        메세지 전송이 있으면 충분합니다. 향후 버전에서 Node는 현재의 설계와 아주
+        잘 맞는 형태로 자식 프로세스를 fork (<a
+        href="http://www.whatwg.org/specs/web-workers/current-work/"> Web
+        Workers API </a>를 사용하여)할 수 있게 될 예정입니다.
+      </p>
+
+      <p>
+        See also:
+        
+        <ul>
+          <li><a href="http://s3.amazonaws.com/four.livejournal/20091117/jsconf.pdf">slides</a> from JSConf 2009</li>
+          <li><a href="http://nodejs.org/jsconf2010.pdf">slides</a> from JSConf 2010</li>
+          <li><a href="http://www.yuiblog.com/blog/2010/05/20/video-dahl/">video</a> from a talk at Yahoo in May 2010</li>
+        </ul>
+      </p>
+
+
+      <h2 id="links">Links</h2>
+
+      <ul>
+
+      <li>
+        A chat room <b>demo</b> is running at <a
+          href="http://chat.nodejs.org">chat.nodejs.org</a>. The
+        source code for the chat room is at <a
+          href="http://github.com/ry/node_chat/tree/master">http://github.com/ry/node_chat</a>.
+        The chat room is not stable and might occasionally be down.
+        대화방 <b>데모</b> <a
+          href="http://chat.nodejs.org">chat.nodejs.org</a>가 동작하고 있습니다.
+        소스코드는 <a
+          href="http://github.com/ry/node_chat/tree/master">http://github.com/ry/node_chat</a>
+        입니다. 안정화되지 않아서 종종 다운되는 경우도 있습니다.
+      </li>
+
+      <li>
+        For help and discussion, subscribe to the mailing list at
+        <a href="http://groups.google.com/group/nodejs">http://groups.google.com/group/nodejs</a>
+        or send an email to <a href="mailto:nodejs+subscribe@googlegroups.com">nodejs+subscribe@googlegroups.com</a>.
+        For real-time discussion, check irc.freenode.net <code>#node.js</code>.
+        조언을 구하거나 논의하는 데, <a href="http://groups.google.com/group/nodejs">http://groups.google.com/group/nodejs</a>
+        에 있는 메일링 리스트에 가입하세요. <a href="mailto:nodejs+subscribe@googlegroups.com">nodejs+subscribe@googlegroups.com</a>.
+        으로 메일을 보냄으로 참여할 수 있습니다. 실시간으로 토론에 참여하고
+        싶은 경우에는, irc.freenode.net의 <code>#node.js</code>를 확인하십시오.
+      </li>
+
+      <li>
+        <a href="http://nodejs.debuggable.com/">IRC logs</a>
+        <a href="http://nodejs.debuggable.com/">IRC 로그</a>
+      </li>
+
+      <li>
+        <a href="http://wiki.github.com/ry/node">Projects/libraries which are using/for Node.js</a>
+        <a href="http://wiki.github.com/ry/node">Node.js 를 이용하거나, 또는 Node.js를 위한 프로젝트나 라이브러리</a>
+      </li>
+
+      <li>
+        <a href="http://buildbot.nodejs.org:8010/">Node.js buildbot</a>
+        <a href="http://buildbot.nodejs.org:8010/">Node.js 빌드봇</a>
+      </li>
+
+      </ul>
+
+      <h2 id="contributing">Contributing 공헌 및 기여</h2>
+      <p>
+        Patches are welcome. The process is simple:
+        패치는 환영합니다. 패치 과정도 간단합니다.
+      </p>
+
+      <pre class="sh_none">
+git clone git://github.com/ry/node.git
+cd node
+(make your changes)
+./configure --debug
+make test-all # Check your patch with both debug and release builds
+git commit -m "Good description of what your patch does"
+git format-patch HEAD^
+
+
+git clone git://github.com/ry/node.git
+cd node
+(make your changes)
+./configure --debug
+make test-all # 디버그와 릴리즈 빌드와 같이 패치를 확인하세요.
+git commit -m "패치 내용의 명확한 설명"
+git format-patch HEAD^
+
+</pre>
+
+      <p>
+        Be sure the your patch includes your full name and your valid email
+        address. Git can be configured to do this like so:
+        패치가 당신의 이름과 유효한 이메일 주소를 포함하는지 확인하세요.
+<pre class="sh_none">
+git config --global user.email "ry@tinyclouds.org"
+git config --global user.name "Ryan Dahl"
+</pre>
+      </p>
+
+      <p>
+        Before your code your code can be accepted you have to sign the
+        <a href="http://nodejs.org/cla.html">contributor license agreement</a>.
+        당신의 코드가 받아들여지기 위해서는 참여자 계약서에 서명을 해야 합니다.
+      </p>
+
+      <p>
+        The best way for your patch to get noticed is to submit it to the
+       <a href="http://groups.google.com/group/nodejs">mailing list</a> in form
+       of a <a href="http://gist.github.com/">gists</a> or file attachement.
+        패치의 존재를 알리는 가장 좋은 방법은 메일링 리스트에 gists URL및 첨부 파일을
+        첨부하여 게시하는 것입니다.
+      </p>
+
+      <p>
+        You should ask the mailing list if a new feature is wanted before
+        working on a patch.
+        만약 새로운 기능을 원하는 경우에는 패치 작성을 시작하기 전에 메일링 리스트에
+        문의하세요.
+      </p>
+
+    </div>
+    <script type="text/javascript">
+      var gaJsHost = (("https:" == document.location.protocol) ?
+      "https://ssl." : "http://www.");
+      document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+    </script>
+    <script type="text/javascript">
+      try {
+        var pageTracker = _gat._getTracker("UA-10874194-2");
+        pageTracker._trackPageview();
+        } catch(err) {}</script>
+  </body>
+</html>
