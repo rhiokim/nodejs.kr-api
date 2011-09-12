@@ -8,8 +8,11 @@ this module with `require("net");`
 
 Creates a new TCP server. The `connectionListener` argument is
 automatically set as a listener for the `'connection'` event.
+새로운 TCP 서버를 생성한다. `connectionListener` 인수는 `'connect'`
+이벤트에 대한 리스너로 자동으로 추가된다.
 
 `options` is an object with the following defaults:
+`options` 는 다음과 같은 기본 객체이다. 
 
     { allowHalfOpen: false
     }
